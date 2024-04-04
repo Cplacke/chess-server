@@ -1,0 +1,64 @@
+* {
+    font-family: Tahoma, 'Segoe UI', Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+@font-face {
+    font-family: 'PiecesOfEight'; /* Name your font */
+    src: url('/assets/font/pieces_of_eight.ttf') format('truetype'); /* Path to your font file */
+    /* You can add more font formats here for better browser compatibility */
+}
+
+.pirate {
+    font-family: 'PiecesOfEight';
+}
+
+body {
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(54,14,64,1) 35%, rgba(63,56,90,1) 100%) !important;
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    color: ghostwhite;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'PiecesOfEight';
+    color: lightgoldenrodyellow;
+    transform: scale(1.2);
+}
+
+.section-bg {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 0 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.flip {
+    transform: scaleX(-1);
+    display: inline-block;
+}
+
+.record {
+    font-size: large;
+    margin-bottom: 10px;
+}
+
+.piece-icon {
+	width: 10%;
+	max-width: 150px;
+	min-width: 75px;
+	cursor: pointer;
+	margin: auto;
+	display: block;
+}
+
+#avi {
+    height: 100px;
+    border-radius: 15px;
+}

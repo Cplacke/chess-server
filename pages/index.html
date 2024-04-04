@@ -1,0 +1,179 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="/assets/css/animation.css"/>
+        <link rel="stylesheet" href="/assets/css//bootstrap/bootstrap.css"/>
+        <link rel="stylesheet" href="/assets/css/custom.css"/>
+    </head>
+    
+    <main>
+        <body>
+            <div class="section-bg">
+                <h1 class="text-center"> <span class="flip pirate">#</span> Welcome to the Crew #</h1>
+                <p class="mx-5">
+                    Welcome to my realm of chess triumphs and victories, where every move tells a story of strategy and skill! Join me as I unveil the thrilling highlights of my chess odyssey, inviting fellow enthusiasts to partake in the exhilarating pursuit of mastery. Together, let's embark on a journey of discovery, where each encounter on the board unveils new horizons and shapes the champions we aspire to be!
+                </p>
+                <!-- <p class="text-end pirate fs-5 my-0 me-5" style="color: lightgoldenrodyellow">
+                    Take what you can, give nothing back
+                </p> -->
+            </div>
+
+            <!-- HERO IMAGE HERE -->
+            <h2 class="text-center my-4"> Take what you can, Give nothing back ... </h2>
+
+            <div class="section-bg mt-2 mx-auto w-75">
+                <h3 class="text-center"> Statistics </h3>
+                <div class="d-flex">
+                    <div class="d-flex mb-2">
+                        <div class="ms-4">
+                            <img id="avi" alt="loading user data..."/>
+                        </div>
+                        <div class="ms-4 record">
+                            <div>
+                                Last Online: 
+                                <span id="last-online" class="pirate" style="color: lightslategray;"></span>
+                            </div>
+                            <div class="mt-2">
+                                Friends: 
+                                <span id="friends" class="pirate" style="color: lightslategray;"></span>
+                            </div>
+                            <div class="mt-2">
+                                Username: 
+                                <span id="username" class="text-uppercase pirate" style="color: lightslategray;"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2 me-4 ms-auto">
+                        <div class="record"> 
+                            Current Rapid Rating:  
+                            <span id="rating" class="pirate" style="color: lightslategray;"></span>
+                        </div>
+                        <div class="d-flex record mt-2">
+                            <div> 
+                                Wins: 
+                                <span id="wins" class="pirate" style="color: green;"></span>
+                            </div>
+                            <div class="ms-4"> 
+                                Draws: 
+                                <span id="draws" class="pirate" style="color: lightslategray;"></span>
+                            </div>
+                            <div class="ms-4"> 
+                                Losses: 
+                                <span id="losses" class="pirate" style="color: red;"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="section-bg">
+                <h3 class="text-center"> Checkmates by Finishing Blow </h6>
+                    <div class="d-flex justify-content-evenly ">
+                        <div>
+                            <img class="piece-icon shake"
+                                src="https://images.chesscomfiles.com/chess-themes/pieces/tigers/150/wq.png"
+                                onclick="window.location.href = '/?checkmates=queen'"
+                            > <span id="wq" class="text-center fs-3 d-block pirate" style="color: lightslategray;"> * </span>
+                        </div>
+                        <div>
+                            <img class="piece-icon shake"
+                                src="https://images.chesscomfiles.com/chess-themes/pieces/tigers/150/wr.png"
+                                onclick="window.location.href = '/?checkmates=rook'"
+                            > <span id="wr" class="text-center fs-3 d-block pirate" style="color: lightslategray;"> * </span>
+                        </div>
+                        <div>
+                            <img class="piece-icon shake"
+                                src="https://images.chesscomfiles.com/chess-themes/pieces/tigers/150/wb.png"
+                                onclick="window.location.href = '/?checkmates=bishop'"
+                            > <span id="wb" class="text-center fs-3 d-block pirate" style="color: lightslategray;"> * </span>
+                        </div>
+                        <div>
+                            <img class="piece-icon shake"
+                                src="https://images.chesscomfiles.com/chess-themes/pieces/tigers/150/wn.png"
+                                onclick="window.location.href = '/?checkmates=knight'"
+                            > <span id="wn" class="text-center fs-3 d-block pirate" style="color: lightslategray;"> * </span>
+                        </div>
+                        <div>
+                            <img class="piece-icon shake"
+                                src="https://images.chesscomfiles.com/chess-themes/pieces/tigers/150/wp.png"
+                                onclick="window.location.href = '/?checkmates=pawn'"
+                            > <span id="wp" class="text-center fs-3 d-block pirate" style="color: lightslategray;"> * </span>
+                        </div>
+                        <div>
+                            <img class="piece-icon shake"
+                                src="https://images.chesscomfiles.com/chess-themes/pieces/tigers/150/wk.png"
+                                onclick="window.location.href = '/?checkmates=king'"
+                            > <span id="wk" class="text-center fs-3 d-block pirate" style="color: lightslategray;"> * </span>
+                        </div>
+                    </div>
+            </div>
+
+            <div class="section-bg w-50 mx-auto mt-2">
+                <h3 class="text-center"> Most Recent Victory </h3>
+                <img class="mx-auto w-100 mt-4 mb-4"
+                    src="/assets/img/recent-win.png"
+                >
+            </div>
+        </body>
+    </main>
+    <script>
+        window.onload = () => {
+            fetch('https://api.chess.com/pub/player/cplacke').then((res) => {
+                res.json().then((data) => {
+                    console.info({ data });
+                    document.querySelector('#avi').setAttribute(
+                        "src",
+                        data.avatar
+                    )
+                    const active = new Date(0);
+                    active.setUTCSeconds(data.last_online);
+                    document.querySelector('#last-online').append(
+                        active.toLocaleDateString()
+                    )
+                    document.querySelector('#friends').append(
+                        data.followers
+                    )
+                    document.querySelector('#username').append(
+                        data.username
+                    )
+                });
+            });
+            fetch('https://api.chess.com/pub/player/cplacke/stats').then((res) => {
+                res.json().then((data) => {
+
+                    document.querySelector('#rating').append(
+                        data.chess_rapid.last.rating
+                    )
+                    document.querySelector('#wins').append(
+                        data.chess_rapid.record.win
+                    )
+                    document.querySelector('#draws').append(
+                        data.chess_rapid.record.draw
+                    )
+                    document.querySelector('#losses').append(
+                        data.chess_rapid.record.loss
+                    )
+                });
+            });
+            
+            fetch('https://api.chess.com/pub/player/cplacke/games/2024/03/pgn').then((res) => {
+                res.text().then((data) => {
+                    fetch('/pgn/parse', {
+                        method: 'POST',
+                        body: data
+                    }).then((data) => {
+                        data.json().then((mates) => {
+                            document.querySelector('#wq').textContent = mates.mateByPeice.q || '*';
+                            document.querySelector('#wr').textContent = mates.mateByPeice.r || '*';
+                            document.querySelector('#wb').textContent = mates.mateByPeice.b || '*';
+                            document.querySelector('#wn').textContent = mates.mateByPeice.n || '*';
+                            document.querySelector('#wp').textContent = mates.mateByPeice.p || '*';
+                            document.querySelector('#wk').textContent = mates.mateByPeice.k || '*';
+                        })
+                    })
+                });
+            });
+        };
+    </script>
+
+</html>
