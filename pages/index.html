@@ -20,7 +20,7 @@
             <!-- HERO IMAGE HERE -->
             <h2 class="text-center my-4"> Take what you can, Give nothing back ... </h2>
 
-            <div class="section-bg mt-2 mx-auto w-75">
+            <div class="section-bg scale mt-2 mx-auto w-75">
                 <h3 class="text-center"> Statistics </h3>
                 <div class="d-flex">
                     <div class="d-flex mb-2">
@@ -66,7 +66,7 @@
                 </div>
             </div>
 
-            <div class="section-bg">
+            <div class="section-bg scale">
                 <h3 class="text-center"> Checkmates by Finishing Blow </h6>
                     <div class="d-flex justify-content-evenly ">
                         <div>
@@ -108,10 +108,10 @@
                     </div>
             </div>
 
-            <div class="section-bg w-50 mx-auto mt-2">
+            <div class="section-bg scale w-50 mx-auto mt-2">
                 <h3 class="text-center"> Most Recent Victory </h3>
                 <img class="mx-auto w-100 mt-4 mb-4"
-                    src="/assets/img/recent-win.png"
+                    src="/assets/gif/game-104852791462.gif"
                 >
             </div>
         </body>
@@ -163,12 +163,12 @@
                         body: data
                     }).then((data) => {
                         data.json().then((mates) => {
-                            document.querySelector('#wq').textContent = mates.mateByPeice.q || '*';
-                            document.querySelector('#wr').textContent = mates.mateByPeice.r || '*';
-                            document.querySelector('#wb').textContent = mates.mateByPeice.b || '*';
-                            document.querySelector('#wn').textContent = mates.mateByPeice.n || '*';
-                            document.querySelector('#wp').textContent = mates.mateByPeice.p || '*';
-                            document.querySelector('#wk').textContent = mates.mateByPeice.k || '*';
+                            document.querySelector('#wq').textContent = mates.mateByPeice.q.count || '*';
+                            document.querySelector('#wr').textContent = mates.mateByPeice.r.count || '*';
+                            document.querySelector('#wb').textContent = mates.mateByPeice.b.count || '*';
+                            document.querySelector('#wn').textContent = mates.mateByPeice.n.count || '*';
+                            document.querySelector('#wp').textContent = mates.mateByPeice.p.count || '*';
+                            document.querySelector('#wk').textContent = mates.mateByPeice.k.count || '*';
                         })
                     })
                 });

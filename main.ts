@@ -63,6 +63,8 @@ const getAssetResponse = async (asset: string) => {
         contentType = 'image/png'
     } else if (/\.jpe?g/.test(asset)) {
         contentType = 'image/jpg'
+    } else if (/\.gif/.test(asset)) {
+        contentType = 'image/gif'
     } else if (/\.ttf/.test(asset)) {
         contentType = 'font/ttf'
     } else if (/\.css/.test(asset)) {
