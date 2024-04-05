@@ -16,21 +16,15 @@
     }
 }
 
-@keyframes scale {
-    0% {
-        transform: rotate(0) scale(1);
-    }
-    100% {
-        transform: rotate(0) scale(1.03);
-    }
+.scale {
+    transition: transform 0.3s ease; /* Add a transition effect to smoothly animate the scaling */
+}
+
+.scale:hover {
+    transform: scale(1.02); /* Scale the element to 120% on hover */
 }
 
 .shake:hover {
     animation: shake 0.5s ease-in-out;
     transform: scale(1.1);
-}
-
-.scale:hover {
-    animation: scale 0.25s ease-in-out;
-    transform: scale(1.03);
 }

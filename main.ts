@@ -1,4 +1,5 @@
 import { parse, split } from './pgn-decoder/pgn.ts'
+import { getPlayerStats, getGamesThisYear } from './service/chess.ts'
 
 Deno.serve(async (request: Request) => {
 
@@ -21,10 +22,12 @@ Deno.serve(async (request: Request) => {
         return await getAssetResponse(
             route.substring(route.indexOf('assets/'))
         )
-    } else if (/pgn\/parse/.test(route)) {
-        return createPgnPraserResponse(
-            await request.text()
+    } else if (/pages\//.test(route)) {
+        return await getAssetResponse(
+            route.substring(route.indexOf('pages/'))
         )
+    } else if (/pgn\/games/.test(route)) {
+        return await createPgnPraserResponse()
     }
 
     return await createPageResponse('Hello World!')
@@ -43,10 +46,9 @@ const createPageResponse = async (_: string) => {
     });
 }
 
-const createPgnPraserResponse = (data: string) => {
-    const pgn = parse(split(data))
-    const body = JSON.stringify(pgn);
-    return new Response(body, {
+const createPgnPraserResponse = async () => {
+    const data = await getGamesThisYear('Cplacke')
+    return new Response(JSON.stringify(data), {
         status: 200,
         headers: {
             'Content-Type': 'application/json'
