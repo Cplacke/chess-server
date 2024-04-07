@@ -43,7 +43,7 @@ export const cacheArchiveGames = async (username: string) => {
     const games = allGames.split('\n\n\n');
     console.info(games.length, 'Archived games returned');
 
-    await pgnToGif(allGames.split('\n\n\n'));
+    // await pgnToGif(allGames.split('\n\n\n'));
 
     const encoder = new TextEncoder();
     await Deno.writeFile(
