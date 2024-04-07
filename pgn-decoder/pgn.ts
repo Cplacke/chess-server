@@ -15,43 +15,58 @@ export const split = (pgnDatas: string) => {
 }
 
 export const parse = (pgnData: string[]) => {    
-    const mateByPeice = { 
-        q: { count: 0, ids: [] as string[] }, 
-        r: { count: 0, ids: [] as string[] }, 
-        b: { count: 0, ids: [] as string[] }, 
-        n: { count: 0, ids: [] as string[] }, 
-        p: { count: 0, ids: [] as string[] }, 
-        k: { count: 0, ids: [] as string[] } 
+    const mateBypiece = { 
+        queen: { count: 0, ids: [] as string[] }, 
+        rook: { count: 0, ids: [] as string[] }, 
+        bishop: { count: 0, ids: [] as string[] }, 
+        knight: { count: 0, ids: [] as string[] }, 
+        pawn: { count: 0, ids: [] as string[] }, 
+        king: { count: 0, ids: [] as string[] } 
     }
+
+    // sort games by date
     const checkmates = pgnData.filter((game) => {
         return getTermination(game)?.includes("Cplacke won by checkmate")
+    }).sort((a, b) => {
+        return  getDate(b).localeCompare(getDate(a))
     });
     checkmates.forEach((game) => {
         const endMove = getEndMove(game);
         const gameId = getGameId(game);
         if (endMove.startsWith('Q')) {
-            mateByPeice.q.count += 1;
-            mateByPeice.q.ids.push(gameId);
+            mateBypiece.queen.count += 1;
+            mateBypiece.queen.ids.push(gameId);
         } else if (endMove.startsWith('R')) {
-            mateByPeice.r.count += 1;
-            mateByPeice.r.ids.push(gameId);
+            mateBypiece.rook.count += 1;
+            mateBypiece.rook.ids.push(gameId);
         } else if (endMove.startsWith('B')) {
-            mateByPeice.b.count += 1;
-            mateByPeice.b.ids.push(gameId);
+            mateBypiece.bishop.count += 1;
+            mateBypiece.bishop.ids.push(gameId);
         } else if (endMove.startsWith('N')) {
-            mateByPeice.n.count += 1;
-            mateByPeice.n.ids.push(gameId);
+            mateBypiece.knight.count += 1;
+            mateBypiece.knight.ids.push(gameId);
         } else if (endMove.startsWith('K')) {
-            mateByPeice.k.count += 1;
-            mateByPeice.k.ids.push(gameId);
+            mateBypiece.king.count += 1;
+            mateBypiece.king.ids.push(gameId);
         } else { // if (endMove.length == 2) {
-            mateByPeice.p.count += 1;
-            mateByPeice.p.ids.push(gameId);
+            mateBypiece.pawn.count += 1;
+            mateBypiece.pawn.ids.push(gameId);
         }
     });
-
+    const games = checkmates.map((game) => ({
+        gameId: getGameId(game),
+        gif: `/assets/gif/game-${getGameId(game)}.gif`,
+        endMove: getEndMove(game),
+        whitePlayer: getWhitePlayer(game),
+        blackPlayer: getBlackPlayer(game),
+        whiteElo: getWhiteElo(game),
+        blackElo: getBlackElo(game),
+        gameLink: getGameLink(game),
+        date: getDate(game),
+        opening: getOpening(game),
+    }));
     return {
-        checkmates, mateByPeice
+        games, mateBypiece
     }
 
 }
@@ -73,7 +88,7 @@ export const pgnToGif = (pgnGames: string[]) => {
             `./assets/gif/game-${gameId}.gif`,
             new Uint8Array(await url.arrayBuffer())
         ); // write it to a file
-        console.info('wrote', `./assets/gif/game-${gameId}.gif`);
+        // console.info('wrote', `./assets/gif/game-${gameId}.gif`);
     });
 
     return Promise.all(files)
@@ -90,4 +105,25 @@ const getEndMove = (pgn: string) => {
 }
 const isPlayingBlack = (pgn: string) => {
     return /\[Black \"Cplacke\"\]/.test(pgn)
+}
+const getWhitePlayer = (pgn: string) => {
+    return /\[White \"(.*?)\"\]/.exec(pgn)?.at(1) || '?'
+}
+const getBlackPlayer = (pgn: string) => {
+    return /\[Black \"(.*?)\"\]/.exec(pgn)?.at(1) || '?'
+}
+const getWhiteElo = (pgn: string) => {
+    return /\[WhiteElo \"(.*?)\"\]/.exec(pgn)?.at(1) || '?'
+}
+const getBlackElo = (pgn: string) => {
+    return /\[BlackElo \"(.*?)\"\]/.exec(pgn)?.at(1) || '?'
+}
+const getGameLink = (pgn: string) => {
+    return /\[Link \"(.*?)\"\]/.exec(pgn)?.at(1) || '?'
+}
+const getDate = (pgn: string) => {
+    return /\[Date \"(.*?)\"\]/.exec(pgn)?.at(1) || '?'
+}
+const getOpening = (pgn: string) => {
+    return /\[ECOUrl \"https:\/\/www.chess.com\/openings\/(.*?)\"\]/.exec(pgn)?.at(1)?.replaceAll('-', ' ') || '?'
 }

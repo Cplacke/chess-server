@@ -15,30 +15,10 @@ export const getPlayerStats = (username: string) => {
     });
 }
 
-export const getGamesThisYear = async (username: string) => {
-
-    // const allGames = await getGamesFromService(username);
-
-    const decoder = new TextDecoder('utf-8');
-    const file = await Deno.readFile('./assets/archive.pgn');
-    const allGames = decoder.decode(file).split('\n\n\n');
-
-    // const encoder = new TextEncoder();
-    // Deno.writeFileSync('./assets/archive.pgn', encoder.encode(pgns.join('\n\n\n')))
-
-    // combine all request data into mega data, and parse
-    const summary = parse(allGames)
-    // console.info(summary.mateByPeice);
-    console.info('mate count', summary.checkmates.length);
-
-    // pgnToGif(summary.checkmates)
-    return summary;
-}
-
-const getGamesFromService = async (username: string) => {
+export const cacheArchiveGames = async (username: string) => {
     const now = new Date(Date.now())
     let cursor = datefns.startOfYear(
-        datefns.setYear(now, 2021)
+        datefns.setYear(now, 2020)
     );
     const requests: Promise<any>[] = [];
 
@@ -46,10 +26,7 @@ const getGamesFromService = async (username: string) => {
         !(cursor.getFullYear() == now.getFullYear() && 
         cursor.getMonth() == now.getMonth())
     ) {
-        console.info('req for ',`${cursor.getFullYear()}/${cursor.getMonth()+1}/pgn`);
-        requests.push(
-            fetch(`https://api.chess.com/pub/player/${username}/games/${cursor.getFullYear()}/${cursor.getMonth()+1}/pgn`)
-        );
+        requests.push(getGames(username, cursor));
         cursor = datefns.add(cursor, { months: 1 })
     }
 
@@ -62,11 +39,42 @@ const getGamesFromService = async (username: string) => {
         }
     }
 
-    // combine into single data file for parsing
-    const allGames = pgns.join('\n\n\n').split('\n\n\n');
-    console.info('all request retruned', responses.length);
-    console.info(allGames.length, 'Games returned');
-    return allGames;
+    const allGames = pgns.join('\n\n\n');
+    const games = allGames.split('\n\n\n');
+    console.info(games.length, 'Archived games returned');
+
+    await pgnToGif(allGames.split('\n\n\n'));
+
+    const encoder = new TextEncoder();
+    await Deno.writeFile(
+        './assets/archive.pgn', 
+        encoder.encode(pgns)
+    );
 }
 
-getGamesThisYear('cplacke');
+export const getAllGames = async (username: string) => {
+
+    const now = new Date(Date.now());
+    const request = getGames(username, now);
+
+    const decoder = new TextDecoder('utf-8');
+    const file = await Deno.readFile('./assets/archive.pgn');
+    const allGames = decoder.decode(file).split('\n\n\n');
+
+    const response = await request;
+    const newGames = await response.text();
+
+    allGames.push(... newGames.split('\n\n\n'))
+    // combine all request data into mega data, and parse
+    const summary = parse(allGames)
+    // console.info(summary.mateByPeice);
+    console.info('mate count', summary.games.length);
+    await pgnToGif(newGames.split('\n\n\n'))
+
+    return summary;
+}
+
+const getGames = (username: string, date: Date) => {
+    console.info('getGames for month',`${date.getFullYear()}/${date.getMonth()+1}/pgn`);
+    return fetch(`https://api.chess.com/pub/player/${username}/games/${date.getFullYear()}/${date.getMonth()+1}/pgn`);
+}

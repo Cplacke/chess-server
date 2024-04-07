@@ -1,23 +1,26 @@
+import { getCheckmatePage } from './pages/checkmate.ts';
 import { parse, split } from './pgn-decoder/pgn.ts'
-import { getPlayerStats, getGamesThisYear } from './service/chess.ts'
+import { getPlayerStats, getAllGames, cacheArchiveGames } from './service/chess.ts'
+
+await cacheArchiveGames('cplacke')
 
 Deno.serve(async (request: Request) => {
 
     const route = request.url;
     if (/\?checkmates=queen/.test(route)) {
-        return await createPageResponse('queen mates')
+        return await createCheckmatePageResponse('Queen')
     } else if (/\?checkmates=rook/.test(route)) {
-        return await createPageResponse('rook mates')
+        return await createCheckmatePageResponse('Rook')
     } else if (/\?checkmates=bishop/.test(route)) {
-        return await createPageResponse('bishop mates')
+        return await createCheckmatePageResponse('Bishop')
     } else if (/\?checkmates=knight/.test(route)) {
-        return await createPageResponse('knight mates')
+        return await createCheckmatePageResponse('Knight')
     } else if (/\?checkmates=pawn/.test(route)) {
-        return await createPageResponse('pawn mates')
+        return await createCheckmatePageResponse('Pawn')
     } else if (/\?checkmates=king/.test(route)) {
-        return await createPageResponse('king mates')
+        return await createCheckmatePageResponse('King')
     } else if (/\?checkmates=special/.test(route)) {
-        return await createPageResponse('special mates')
+        return await createCheckmatePageResponse('Special')
     } else if (/assets\//.test(route)) {
         return await getAssetResponse(
             route.substring(route.indexOf('assets/'))
@@ -30,13 +33,13 @@ Deno.serve(async (request: Request) => {
         return await createPgnPraserResponse()
     }
 
-    return await createPageResponse('Hello World!')
+    return await createHomePageResponse('Hello World!')
 
 })
 
 const decoder = new TextDecoder('utf-8');
 
-const createPageResponse = async (_: string) => {
+const createHomePageResponse = async (_: string) => {
     const data = await Deno.readFile('./pages/index.html');
     return new Response(decoder.decode(data), {
         status: 200,
@@ -46,8 +49,18 @@ const createPageResponse = async (_: string) => {
     });
 }
 
+const createCheckmatePageResponse = async (piece: string) => {
+    const data = await getCheckmatePage(piece);
+    return new Response(data, {
+        status: 200,
+        headers: {
+            'Content-Type': 'HTML'
+        }
+    });
+}
+
 const createPgnPraserResponse = async () => {
-    const data = await getGamesThisYear('Cplacke')
+    const data = await getAllGames('Cplacke')
     return new Response(JSON.stringify(data), {
         status: 200,
         headers: {

@@ -13,9 +13,6 @@
                 <p class="mx-5">
                     Welcome to my realm of chess triumphs and victories, where every move tells a story of strategy and skill! Join me as I unveil the thrilling highlights of my chess odyssey, inviting fellow enthusiasts to partake in the exhilarating pursuit of mastery. Together, let's embark on a journey of discovery, where each encounter on the board unveils new horizons and shapes the champions we aspire to be!
                 </p>
-                <!-- <p class="text-end pirate fs-5 my-0 me-5" style="color: lightgoldenrodyellow">
-                    Take what you can, give nothing back
-                </p> -->
             </div>
 
             <!-- HERO IMAGE HERE -->
@@ -61,6 +58,11 @@
                                 Losses: 
                                 <span id="losses" class="pirate" style="color: red;"></span>
                             </div>
+                        </div>
+                        <div class="d-flex record mt-2" style="height: 20px;opacity: 0.5;">
+                            <div id="win-bar" style="background-color: green; border-radius: 5px 0 0 5px;"></div>
+                            <div id="draw-bar" style="background-color: lightslategray;"></div>
+                            <div id="loss-bar" style="background-color: darkred; border-radius: 0 5px 5px 0;"></div>
                         </div>
                     </div>
 
@@ -111,9 +113,7 @@
 
             <div class="section-bg scale w-50 mx-auto mt-2">
                 <h3 class="text-center"> Most Recent Victory </h3>
-                <img class="mx-auto w-100 mt-4 mb-4"
-                    src="/assets/gif/game-104852791462.gif"
-                >
+                <img id="recent-game" class="mx-auto w-100 mt-4 mb-4">
             </div>
         </body>
     </main>
