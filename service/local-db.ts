@@ -1,4 +1,4 @@
-// import 'npm:localstorage-polyfill';
+import 'npm:localstorage-polyfill';
 import { Collection, Entity, StorageType } from 'https://deno.land/x/localdb@0.0.2/mod.ts'
 import { getGameId } from '../pgn-decoder/pgn.ts'
 
