@@ -19,19 +19,19 @@ export const getPlayerStats = (username: string) => {
 export const cacheArchiveGames = async (username: string) => {
     const now = new Date(Date.now())
     let cursor = datefns.startOfYear(
-        datefns.setYear(now, 2021)
+        datefns.setYear(now, 2022)
     );
-    const requests: Promise<Response>[] = [];
+    const responses: Response[] = [];
 
     while (
         !(cursor.getFullYear() == now.getFullYear() && 
         cursor.getMonth() == now.getMonth())
     ) {
-        requests.push(getGames(username, cursor));
+        responses.push(await getGames(username, cursor));
         cursor = datefns.add(cursor, { months: 1 })
     }
 
-    const responses = await Promise.all(requests);
+    // const responses = await Promise.all(requests);
     const pgns: string[] = [];
     for (let i=0; i<responses.length; i++) {
         const pgn = await responses[i].text();
