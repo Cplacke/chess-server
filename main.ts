@@ -1,6 +1,6 @@
 import { getCheckmatePage } from './pages/checkmate.ts';
-import { parse, split } from './pgn-decoder/pgn.ts'
-import { getPlayerStats, getAllGames, cacheArchiveGames } from './service/chess.ts'
+import { pgnToGif } from './pgn-decoder/pgn.ts'
+import { getAllGames, cacheArchiveGames } from './service/chess.ts'
 
 await cacheArchiveGames('cplacke')
 
@@ -21,6 +21,8 @@ Deno.serve(async (request: Request) => {
         return await createCheckmatePageResponse('King')
     } else if (/\?checkmates=special/.test(route)) {
         return await createCheckmatePageResponse('Special')
+    } else if (/generate\/gif/.test(route)) {
+        return await createGifResponse(route)
     } else if (/assets\//.test(route)) {
         return await getAssetResponse(
             route.substring(route.indexOf('assets/'))
@@ -33,13 +35,13 @@ Deno.serve(async (request: Request) => {
         return await createPgnPraserResponse()
     }
 
-    return await createHomePageResponse('Hello World!')
+    return await createHomePageResponse()
 
 })
 
 const decoder = new TextDecoder('utf-8');
 
-const createHomePageResponse = async (_: string) => {
+const createHomePageResponse = async () => {
     const data = await Deno.readFile('./pages/index.html');
     return new Response(decoder.decode(data), {
         status: 200,
@@ -92,6 +94,21 @@ const getAssetResponse = async (asset: string) => {
         status: 200,
         headers: {
             'Content-Type': contentType
+        }
+    });
+}
+
+const createGifResponse = async (route: string) => {  
+    const gameId = /generate\/gif\/(.*)/.exec(route)?.at(1);
+    if (!gameId) {
+        return new Response('Missing GameId', { status: 404 });
+    }
+
+    const gif = await pgnToGif(gameId);
+    return new Response(gif, {
+        status: 200,
+        headers: {
+            'Content-Type': 'image/gif'
         }
     });
 }

@@ -1,4 +1,5 @@
 import * as base64 from "https://deno.land/std@0.207.0/encoding/base64.ts";
+import { getArchiveGamesById } from "../service/local-db.ts";
 import { ChessGif, parseMoves } from "npm:pgn2gif";
 const decoder = new TextDecoder('utf-8');
 
@@ -55,7 +56,7 @@ export const parse = (pgnData: string[]) => {
     });
     const games = checkmates.map((game) => ({
         gameId: getGameId(game),
-        gif: `/assets/gif/game-${getGameId(game)}.gif`,
+        gif: `/generate/gif/${getGameId(game)}`,
         endMove: getEndMove(game),
         whitePlayer: getWhitePlayer(game),
         blackPlayer: getBlackPlayer(game),
@@ -71,30 +72,22 @@ export const parse = (pgnData: string[]) => {
 
 }
 
-export const pgnToGif = (pgnGames: string[]) => {
-    const files = pgnGames
-    .filter((game) => (/\[Termination \"Cplacke won by checkmate\"\]/.test(game)))
-    .map(async (game, i) => {
-        const gameId = getGameId(game);
-        const moves = parseMoves(game);
-        const chessgif = new ChessGif();
-        chessgif.resetCache(); // reset boardCache (optional first time)
-        chessgif.loadMoves(moves); // load moves 
+export const pgnToGif = async (gameId: string) => {
+    const record = getArchiveGamesById(gameId);
+    const moves = parseMoves(record.pgn);
 
-        await chessgif.createGif(moves.length -3, moves.length, isPlayingBlack(game)); // generate blobs of gif file
-        const url = chessgif.asBase64Gif(); // export file blobs  typeof gif
+    const chessgif = new ChessGif();
+    chessgif.resetCache(); // reset boardCache (optional first time)
+    chessgif.loadMoves(moves); // load moves 
 
-        Deno.writeFileSync(
-            `./assets/gif/game-${gameId}.gif`,
-            new Uint8Array(await url.arrayBuffer())
-        ); // write it to a file
-        // console.info('wrote', `./assets/gif/game-${gameId}.gif`);
-    });
+    await chessgif.createGif(moves.length -3, moves.length, isPlayingBlack(record.pgn)); // generate blobs of gif file
+    const url = chessgif.asBase64Gif(); // export file blobs  typeof gif
 
-    return Promise.all(files)
+    // return await url.text();
+    return new Uint8Array(await url.arrayBuffer())
 }
 
-const getGameId = (pgn: string) => {
+export const getGameId = (pgn: string) => {
     return /\[Link \"https:\/\/www.chess.com\/game\/live\/(\d+)\"\]/.exec(pgn)?.at(1) || 'UNKNOWN'
 }
 const getTermination = (pgn: string) => {

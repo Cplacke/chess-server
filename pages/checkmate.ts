@@ -47,8 +47,8 @@ export const getCheckmatePage = async (piece: string) => {
 import { getAllGames } from '../service/chess.ts';
 
 export const getGamesElements = async (piece: string) => {
-  const data = await getAllGames('cplacke');
-  const gameTemplate = `
+    const data = await getAllGames('cplacke');
+    const gameTemplate = `
         <div class="mx-2 my-5 py-4 d-flex"">
             <div class="d-block mt-3 w-100">
                 <span class="fs-5 d-block">
