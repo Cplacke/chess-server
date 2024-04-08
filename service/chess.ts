@@ -1,6 +1,6 @@
 import * as datefns from "npm:date-fns"
 import { parse } from '../pgn-decoder/pgn.ts'
-import { addArchiveGames, getAllArchiveGames } from './local-db.ts'
+import { addArchiveGames, getAllArchiveGames, getArchiveGamesById } from './local-db.ts'
 
 
 export const getPlayerStats = (username: string) => {

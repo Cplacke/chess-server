@@ -3,6 +3,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    scrollbar-width: 0;
 }
 
 @font-face {
@@ -22,14 +23,12 @@ body {
 main {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
     color: ghostwhite;
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-family: 'PiecesOfEight';
     color: lightgoldenrodyellow;
-    transform: scale(1.2);
 }
 
 .section-bg {
@@ -50,9 +49,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .piece-icon {
-	width: 10%;
+	width: 60%;
 	max-width: 150px;
-	min-width: 75px;
+	min-width: 60px;
 	cursor: pointer;
 	margin: auto;
 	display: block;

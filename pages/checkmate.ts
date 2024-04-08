@@ -49,31 +49,31 @@ import { getAllGames } from '../service/chess.ts';
 export const getGamesElements = async (piece: string) => {
     const data = await getAllGames('cplacke');
     const gameTemplate = `
-        <div class="mx-2 my-5 py-4 d-flex"">
-            <div class="d-block mt-3 w-100">
-                <span class="fs-5 d-block">
+        <div class="mx-2 my-5 d-block d-md-flex">
+            <div class="d-block mt-3 mb-3 mb-md-0 w-100">
+                <span class="d-block fs-5 fs-md-3 ">
                     <span class="pirate fs-3" style="color: lightgoldenrodyellow">White :</span> 
                     {{whitePlayer}} 
                     <span style="color: lightslategray">[{{whiteElo}}]</span>
                 </span>
-                <span class="fs-5 d-block">
+                <span class="d-block fs-5 fs-md-3 ">
                     <span class="pirate fs-3" style="color: lightgoldenrodyellow">Black :</span> 
                     {{blackPlayer}} 
                     <span style="color: lightslategray">[{{blackElo}}]</span>
                 </span>
-                <span class="fs-5 d-block">
+                <span class="d-block fs-5 fs-md-3 ">
                     <span class="pirate fs-3" style="color: lightgoldenrodyellow">Opening :</span> 
                     {{opening}}
                 </span>
-                <span class="fs-5 d-block">
+                <span class="d-block fs-5 fs-md-3 ">
                     <span class="pirate fs-3" style="color: lightgoldenrodyellow">Date :</span> 
                     {{date}}
                 </span>
-                <button type="button" class="btn btn-primary pirate fs-5 mt-2" onclick="window.location.href='{{gameLink}}'">
+                <button type="button" class="btn btn-primary pirate fs-5 fs-md-3 mt-2" onclick="window.location.href='{{gameLink}}'">
                     VIEW FULL GAME
                 </button>
             </div>
-            <img class="ms-auto d-block w-75" src="{{imgSrc}}" />
+            <img class="ms-auto d-block w-100 w-md-75" src="{{imgSrc}}" />
         </div>
     `;
     //@ts-ignore
