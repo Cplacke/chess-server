@@ -1,6 +1,6 @@
 import { getGameId } from '../pgn-decoder/pgn.ts'
 
-export const gamesArchive = await Deno.openKv("archive");
+export const gamesArchive = await Deno.openKv();
 
 export const addArchiveGames = (pgn: string[]) => {
     pgn.forEach((game) => {
