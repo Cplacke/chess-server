@@ -3,9 +3,6 @@
     .w-sm-75 { width: 75%; }
     .w-sm-50 { width: 50%; }
     .w-sm-25 { width: 25%; }
-    /* h1, h2, h3, h4, h5, h6 {
-        transform: scale(1.2);
-    } */
 }
 @media (min-width: 768px) {
     .w-md-100 { width: 100%; }

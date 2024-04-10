@@ -1,5 +1,5 @@
 import * as base64 from "https://deno.land/std@0.207.0/encoding/base64.ts";
-import { getArchiveGamesById } from "../service/local-db.ts";
+import { getArchiveGamesById } from "../service/kv.ts";
 import { ChessGif, parseMoves } from "npm:pgn2gif";
 const decoder = new TextDecoder('utf-8');
 
@@ -73,14 +73,14 @@ export const parse = (pgnData: string[]) => {
 }
 
 export const pgnToGif = async (gameId: string) => {
-    const record = getArchiveGamesById(gameId);
-    const moves = parseMoves(record.pgn);
+    const game = await getArchiveGamesById(gameId);
+    const moves = parseMoves(game);
 
     const chessgif = new ChessGif();
     chessgif.resetCache(); // reset boardCache (optional first time)
     chessgif.loadMoves(moves); // load moves 
 
-    await chessgif.createGif(moves.length -3, moves.length, isPlayingBlack(record.pgn)); // generate blobs of gif file
+    await chessgif.createGif(moves.length -3, moves.length, isPlayingBlack(game)); // generate blobs of gif file
     const url = chessgif.asBase64Gif(); // export file blobs  typeof gif
 
     // return await url.text();

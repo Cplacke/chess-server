@@ -1,6 +1,6 @@
 import * as datefns from "npm:date-fns"
 import { parse } from '../pgn-decoder/pgn.ts'
-import { addArchiveGames, getAllArchiveGames, getArchiveGamesById } from './local-db.ts'
+import { addArchiveGames, getAllArchiveGames, getArchiveGamesById } from './kv.ts'
 
 
 export const getPlayerStats = (username: string) => {
@@ -44,7 +44,7 @@ export const cacheArchiveGames = async (username: string) => {
     const games = allGames.split('\n\n\n');
     
     addArchiveGames(games);
-    console.info(`${games.length} Archived games persisted to localStorage`);
+    console.info(`${games.length} Archived games persisted to Deno.kv`);
 }
 
 export const getAllGames = async (username: string) => {
@@ -57,7 +57,7 @@ export const getAllGames = async (username: string) => {
 
     addArchiveGames(pgns);
 
-    const allGames = getAllArchiveGames().map((record) => (record.pgn));
+    const allGames = await getAllArchiveGames();
     const summary = parse(allGames)
     console.info('mate count', summary.games.length);
 

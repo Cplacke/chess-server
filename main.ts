@@ -2,8 +2,6 @@ import { getCheckmatePage } from './pages/checkmate.ts';
 import { pgnToGif } from './pgn-decoder/pgn.ts'
 import { getAllGames, cacheArchiveGames } from './service/chess.ts'
 
-await cacheArchiveGames('cplacke')
-
 Deno.serve(async (request: Request) => {
 
     const route = request.url;
@@ -113,4 +111,4 @@ const createGifResponse = async (route: string) => {
     });
 }
 
-
+cacheArchiveGames('cplacke')
