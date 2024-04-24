@@ -1,6 +1,6 @@
 window.onload = () => {
     // set player profile
-    fetch('https://api.chess.com/pub/player/cplacke').then((res) => {
+    fetch(`https://api.chess.com/pub/player/${USERNAME}`).then((res) => {
         res.json().then((data) => {
             document.querySelector('#avi').setAttribute(
                 "src",
@@ -20,7 +20,7 @@ window.onload = () => {
         });
     });
     // set player stats 
-    fetch('https://api.chess.com/pub/player/cplacke/stats').then((res) => {
+    fetch(`https://api.chess.com/pub/player/${USERNAME}/stats`).then((res) => {
         res.json().then((data) => {
             document.querySelector('#rating').append(
                 data.chess_rapid.last.rating

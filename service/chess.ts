@@ -1,6 +1,5 @@
-import * as datefns from "npm:date-fns"
 import { parse } from '../pgn-decoder/pgn.ts'
-import { addArchiveGames, getAllArchiveGames, getArchiveGamesById } from './kv.ts'
+import { addArchiveGames, getAllArchiveGames } from './kv.ts'
 
 
 export const getPlayerStats = (username: string) => {
@@ -17,32 +16,24 @@ export const getPlayerStats = (username: string) => {
 }
 
 export const cacheArchiveGames = async (username: string) => {
-    const now = new Date(Date.now())
-    let cursor = datefns.startOfYear(
-        datefns.setYear(now, 2022)
-    );
-    const responses: Response[] = [];
 
-    while (
-        !(cursor.getFullYear() == now.getFullYear() && 
-        cursor.getMonth() == now.getMonth())
-    ) {
-        responses.push(await getGames(username, cursor));
-        cursor = datefns.add(cursor, { months: 1 })
-    }
+    const archiveRes = await fetch(`https://api.chess.com/pub/player/${username}/games/archives`);
+    const archiveData = await archiveRes.json();
 
-    // const responses = await Promise.all(requests);
     const pgns: string[] = [];
-    for (let i=0; i<responses.length; i++) {
-        const pgn = await responses[i].text();
-        if (pgn.length > 0) {
-            pgns.push(pgn);
-        }
+
+
+    for (let i=0; i<archiveData.archives.length; i++) {
+        const url = `${archiveData.archives[i]}/pgn`;
+        console.info('archiving', url);
+        const response = await fetch(url);
+        const pgn = await response.text();
+        pgns.push(pgn);
     }
 
     const allGames = pgns.join('\n\n\n');
     const games = allGames.split('\n\n\n');
-    
+
     addArchiveGames(games);
     console.info(`${games.length} Archived games persisted to Deno.kv`);
 }

@@ -1,6 +1,7 @@
 import { getCheckmatePage } from './pages/checkmate.ts';
 import { pgnToGif } from './pgn-decoder/pgn.ts'
 import { getAllGames, cacheArchiveGames } from './service/chess.ts'
+import config from './config.ts'
 
 Deno.serve(async (request: Request) => {
 
@@ -41,7 +42,8 @@ const decoder = new TextDecoder('utf-8');
 
 const createHomePageResponse = async () => {
     const data = await Deno.readFile('./pages/index.html');
-    return new Response(decoder.decode(data), {
+    const html = decoder.decode(data).replace('{{USERNAME}}', config.username);
+    return new Response(html, {
         status: 200,
         headers: {
             'Content-Type': 'HTML'
@@ -60,7 +62,7 @@ const createCheckmatePageResponse = async (piece: string) => {
 }
 
 const createPgnPraserResponse = async () => {
-    const data = await getAllGames('Cplacke')
+    const data = await getAllGames(config.username)
     return new Response(JSON.stringify(data), {
         status: 200,
         headers: {
@@ -111,4 +113,4 @@ const createGifResponse = async (route: string) => {
     });
 }
 
-cacheArchiveGames('cplacke')
+cacheArchiveGames(config.username)

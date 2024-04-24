@@ -1,0 +1,1 @@
+deno run -A --unstable-kv main.ts 

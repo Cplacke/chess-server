@@ -1,4 +1,5 @@
 import * as base64 from "https://deno.land/std@0.207.0/encoding/base64.ts";
+import config from "../config.ts"
 import { getArchiveGamesById } from "../service/kv.ts";
 import { ChessGif, parseMoves } from "npm:pgn2gif";
 const decoder = new TextDecoder('utf-8');
@@ -27,7 +28,7 @@ export const parse = (pgnData: string[]) => {
 
     // sort games by date
     const checkmates = pgnData.filter((game) => {
-        return getTermination(game)?.includes("Cplacke won by checkmate")
+        return RegExp(`${config.username} won by checkmate`, "i").test(getTermination(game))
     }).sort((a, b) => {
         return  getDate(b).localeCompare(getDate(a))
     });
@@ -83,7 +84,6 @@ export const pgnToGif = async (gameId: string) => {
     await chessgif.createGif(moves.length -3, moves.length, isPlayingBlack(game)); // generate blobs of gif file
     const url = chessgif.asBase64Gif(); // export file blobs  typeof gif
 
-    // return await url.text();
     return new Uint8Array(await url.arrayBuffer())
 }
 
@@ -96,14 +96,14 @@ const getTermination = (pgn: string) => {
 const getEndMove = (pgn: string) => {
     return /\W(\w+\#)/.exec(pgn)?.at(1) || 'NO MATE'
 }
-const isPlayingBlack = (pgn: string) => {
-    return /\[Black \"Cplacke\"\]/.test(pgn)
-}
 const getWhitePlayer = (pgn: string) => {
     return /\[White \"(.*?)\"\]/.exec(pgn)?.at(1) || '?'
 }
 const getBlackPlayer = (pgn: string) => {
     return /\[Black \"(.*?)\"\]/.exec(pgn)?.at(1) || '?'
+}
+const isPlayingBlack = (pgn: string) => {
+    return getBlackPlayer(pgn).toLocaleLowerCase() === config.username.toLocaleLowerCase();
 }
 const getWhiteElo = (pgn: string) => {
     return /\[WhiteElo \"(.*?)\"\]/.exec(pgn)?.at(1) || '?'

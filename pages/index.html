@@ -5,6 +5,7 @@
         <link rel="stylesheet" href="/assets/css//bootstrap/bootstrap.css"/>
         <link rel="stylesheet" href="/assets/css/custom.css"/>
         <link rel="stylesheet" href="/assets/css/responsive.css"/>
+        <script>let USERNAME = "{{USERNAME}}" </script>
         <script src="/pages/index.js"></script>
     </head>
     
@@ -24,7 +25,7 @@
                 <h3 class="text-center"> Statistics </h3>
                 <div class="d-sm-flex">
                     <div class="d-flex mb-2">
-                        <div class="ms-4">
+                        <div>
                             <img id="avi" alt="loading user data..."/>
                         </div>
                         <div class="ms-auto ms-sm-4 record">
@@ -42,7 +43,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mb-2 me-sm-4 ms-auto">
+                    <div class="mb-2 ps-md-2 ms-auto">
                         <div class="record"> 
                             Current Rapid Rating:  
                             <span id="rating" class="pirate" style="color: lightslategray;"></span>

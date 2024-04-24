@@ -23,3 +23,26 @@ export const getArchiveGamesById = async (id: string) => {
     const game = await gamesArchive.get(['game', id]);
     return game.value as string;
 }
+
+
+const clearKvStorage = async () => {
+    let count = 0;
+    const entries = gamesArchive.list({ prefix: ["game"] });
+    for await (const entry of entries) {
+        await gamesArchive.delete(entry.key)
+        count++;
+    }
+    console.info('kv cleared', count, 'records');
+}
+
+const getKvRecordsCount = async () => {
+    let count = 0;
+    const entries = gamesArchive.list({ prefix: ["game"] });
+    for await (const entry of entries) {
+        count++;
+    }
+    console.info('kv record count', count);
+}
+
+// await clearKvStorage();
+await getKvRecordsCount();

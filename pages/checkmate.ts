@@ -1,9 +1,10 @@
+import config from '../config.ts'
 const decoder = new TextDecoder('utf-8');
 const data = await Deno.readFile('./pages/checkmates.html');
 decoder.decode(data)
 
 // deno-lint-ignore no-explicit-any
-const config: any = {
+const titleConfig: any = {
     King: {
         image: "https://images.chesscomfiles.com/chess-themes/pieces/tigers/150/wk.png",
         quote: "Captain of the chessboard, ruling the seas with wisdom and might."
@@ -37,8 +38,8 @@ export const getCheckmatePage = async (piece: string) => {
     let html = decoder.decode(data);
 
     html = html.replaceAll('{{piece}}', `${piece}`)
-    html = html.replaceAll('{{image}}', config[piece].image)
-    html = html.replaceAll('{{quote}}', config[piece].quote)
+    html = html.replaceAll('{{image}}', titleConfig[piece].image)
+    html = html.replaceAll('{{quote}}', titleConfig[piece].quote)
     html = html.replaceAll('{{games}}', await getGamesElements(piece))
 
     return html;
@@ -47,7 +48,17 @@ export const getCheckmatePage = async (piece: string) => {
 import { getAllGames } from '../service/chess.ts';
 
 export const getGamesElements = async (piece: string) => {
-    const data = await getAllGames('cplacke');
+    const data = await getAllGames(config.username);
+    
+    //@ts-ignore
+    const html = data.mateBypiece[piece.toLocaleLowerCase()].ids.map((gameId) => {
+        const game = data.games.find((game) => (game.gameId === gameId));
+        return getGamePage(game);
+    });
+    return html.join('');
+};
+
+export const getGamePage = (game: any) => {
     const gameTemplate = `
         <div class="mx-2 my-5 d-block d-md-flex">
             <div class="d-block mt-3 mb-3 mb-md-0 w-100">
@@ -76,13 +87,10 @@ export const getGamesElements = async (piece: string) => {
             <img class="ms-auto d-block w-100 w-md-75" src="{{imgSrc}}" />
         </div>
     `;
-    //@ts-ignore
-    const html = data.mateBypiece[piece.toLocaleLowerCase()].ids.map((gameId) => {
-        const game = data.games.find((game) => (game.gameId === gameId));
-        if (!game) {
+    if (!game) {
         return;
-        }
-        return gameTemplate
+    }
+    return gameTemplate
         .replace('{{imgSrc}}', game.gif)
         .replace('{{whitePlayer}}', game.whitePlayer)
         .replace('{{whiteElo}}', game.whiteElo)
@@ -91,8 +99,6 @@ export const getGamesElements = async (piece: string) => {
         .replace('{{opening}}', game.opening)
         .replace('{{date}}', game.date)
         .replace('{{gameLink}}', game.gameLink);
-    });
-    return html.join('');
-};
+}
 
 
