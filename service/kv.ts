@@ -2,10 +2,15 @@ import { getGameId } from '../pgn-decoder/pgn.ts'
 
 export const gamesArchive = await Deno.openKv();
 
-export const addArchiveGames = (pgn: string[]) => {
-    pgn.forEach((game) => {
+export const addArchiveGames = async(pgn: string[]) => {
+    const ids = await getAllGameIds();
+    const pgnToAdd = pgn.filter((game) => (
+        !ids.includes(getGameId(game))
+    ));
+    console.info(`persisting ${pgnToAdd.length} new games to kv`);
+    pgnToAdd.forEach((game) => {
         gamesArchive.set(
-            ['game', getGameId(game)], game
+            ['game', getGameId(game), ], game
         )
     });
 }
@@ -22,6 +27,15 @@ export const getAllArchiveGames = async() => {
 export const getArchiveGamesById = async (id: string) => {
     const game = await gamesArchive.get(['game', id]);
     return game.value as string;
+}
+
+export const getAllGameIds = async() => {
+    const res = gamesArchive.list({ prefix: ['game'] });
+    const ids: string[] = [];
+    for await (const game of res) {
+        ids.push(game.key[1] as string);
+    }
+    return ids;
 }
 
 

@@ -90,6 +90,11 @@ export const pgnToGif = async (gameId: string) => {
 export const getGameId = (pgn: string) => {
     return /\[Link \"https:\/\/www.chess.com\/game\/live\/(\d+)\"\]/.exec(pgn)?.at(1) || 'UNKNOWN'
 }
+// export const getGameMonth = (pgn: string) => {
+//     const date = getDate(pgn);
+//     const yearMonth = /(\d{4}\.\d{2})/.exec(date);
+//     return yearMonth?.at(1) || 'missing';
+// }
 const getTermination = (pgn: string) => {
     return /\[Termination \"(.*?)\"\]/.exec(pgn)?.at(1) || 'UNKNOWN'
 }
