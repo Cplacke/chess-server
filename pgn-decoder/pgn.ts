@@ -66,6 +66,7 @@ export const parse = (pgnData: string[]) => {
         gameLink: getGameLink(game),
         date: getDate(game),
         opening: getOpening(game),
+        pgn: game
     }));
     return {
         games, mateBypiece
@@ -73,7 +74,7 @@ export const parse = (pgnData: string[]) => {
 
 }
 
-export const pgnToGif = async (gameId: string) => {
+export const gameId2Gif = async (gameId: string) => {
     const game = await getArchiveGamesById(gameId);
     const moves = parseMoves(game);
 
@@ -85,6 +86,19 @@ export const pgnToGif = async (gameId: string) => {
     const url = chessgif.asBase64Gif(); // export file blobs  typeof gif
 
     return new Uint8Array(await url.arrayBuffer())
+}
+
+export const game2Gif = async (game: any) => {
+    const moves = parseMoves(game.pgn);
+
+    const chessgif = new ChessGif();
+    chessgif.resetCache(); // reset boardCache (optional first time)
+    chessgif.loadMoves(moves); // load moves 
+
+    await chessgif.createGif(moves.length -3, moves.length, isPlayingBlack(game.pgn)); // generate blobs of gif file
+    const url = chessgif.asBase64Gif(); // export file blobs  typeof gif
+
+    return base64.encodeBase64(await url.arrayBuffer());
 }
 
 export const getGameId = (pgn: string) => {

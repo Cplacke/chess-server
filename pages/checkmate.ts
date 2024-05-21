@@ -1,4 +1,5 @@
 import config from '../config.ts'
+import { game2Gif } from '../pgn-decoder/pgn.ts';
 const decoder = new TextDecoder('utf-8');
 const data = await Deno.readFile('./pages/checkmates.html');
 decoder.decode(data)
@@ -51,14 +52,21 @@ export const getGamesElements = async (piece: string) => {
     const data = await getAllGames(config.username);
     
     //@ts-ignore
-    const html = data.mateBypiece[piece.toLocaleLowerCase()].ids.map((gameId) => {
+    const promises = data.mateBypiece[piece.toLocaleLowerCase()].ids.map((gameId) => {
         const game = data.games.find((game) => (game.gameId === gameId));
         return getGamePage(game);
     });
+
+    const html = await Promise.all(promises);
+
+    // const html = data.mateBypiece[piece.toLocaleLowerCase()].ids.map((gameId) => {
+    //     const game = data.games.find((game) => (game.gameId === gameId));
+    //     return getGamePage(game);
+    // });
     return html.join('');
 };
 
-export const getGamePage = (game: any) => {
+export const getGamePage = async (game: any) => {
     const gameTemplate = `
         <div class="mx-2 my-5 d-block d-md-flex">
             <div class="d-block mt-3 mb-3 mb-md-0 w-100">
@@ -84,14 +92,14 @@ export const getGamePage = (game: any) => {
                     VIEW FULL GAME
                 </button>
             </div>
-            <img class="ms-auto d-block w-100 w-md-75" src="{{imgSrc}}" />
+            <img class="ms-auto d-block w-100 w-md-75" src="data:image/gif;base64, {{imgSrc}}" />
         </div>
     `;
     if (!game) {
         return;
     }
     return gameTemplate
-        .replace('{{imgSrc}}', game.gif)
+        .replace('{{imgSrc}}', await game2Gif(game))
         .replace('{{whitePlayer}}', game.whitePlayer)
         .replace('{{whiteElo}}', game.whiteElo)
         .replace('{{blackPlayer}}', game.blackPlayer)
