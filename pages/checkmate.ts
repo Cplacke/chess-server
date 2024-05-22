@@ -1,4 +1,4 @@
-import config from '../config.ts'
+import { USERNAME } from '../config.ts'
 import { game2Gif } from '../pgn-decoder/pgn.ts';
 
 // deno-lint-ignore no-explicit-any
@@ -32,7 +32,7 @@ const titleConfig: any = {
 export const getCheckmatePage = async (piece: string) => {
 
     const pageSize = 20;
-    const data = await getAllGames(config.username);
+    const data = await getAllGames(USERNAME);
     // @ts-ignore
     const gamesByPiece: any[] = data.mateBypiece[piece.toLocaleLowerCase()].ids.map((gameId) => {
         return data.games.find((game) => (game.gameId === gameId));

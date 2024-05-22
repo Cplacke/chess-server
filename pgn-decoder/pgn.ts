@@ -1,4 +1,5 @@
 import * as base64 from "https://deno.land/std@0.207.0/encoding/base64.ts";
+import { compareDesc, compareAsc, parseISO } from 'npm:date-fns';
 import config from "../config.ts"
 import { getArchiveGamesById } from "../service/kv.ts";
 import { ChessGif, parseMoves } from "npm:pgn2gif";
@@ -29,9 +30,8 @@ export const parse = (pgnData: string[]) => {
     // sort games by date
     const checkmates = pgnData.filter((game) => {
         return RegExp(`${config.username} won by checkmate`, "i").test(getTermination(game))
-    }).sort((a, b) => {
-        return  getDate(b).localeCompare(getDate(a))
-    });
+    }).sort( sortByDateTime );
+
     checkmates.forEach((game) => {
         const endMove = getEndMove(game);
         const gameId = getGameId(game);
@@ -101,6 +101,12 @@ export const game2Gif = async (game: any) => {
     return base64.encodeBase64(await url.arrayBuffer());
 }
 
+const sortByDateTime = (a: string, b: string) => {
+    let _a = parseISO(`${getDate(a).replace(/\./g, '-')}T${getTime(a)}`);
+    let _b = parseISO(`${getDate(b).replace(/\./g, '-')}T${getTime(b)}`);
+    return compareDesc(_a, _b);
+}
+
 export const getGameId = (pgn: string) => {
     return /\[Link \"https:\/\/www.chess.com\/game\/live\/(\d+)\"\]/.exec(pgn)?.at(1) || 'UNKNOWN'
 }
@@ -135,6 +141,9 @@ const getGameLink = (pgn: string) => {
 }
 const getDate = (pgn: string) => {
     return /\[Date \"(.*?)\"\]/.exec(pgn)?.at(1) || '?'
+}
+const getTime = (pgn: string) => {
+    return /\[EndTime \"(.*?)\"\]/.exec(pgn)?.at(1) || '?'
 }
 const getOpening = (pgn: string) => {
     return /\[ECOUrl \"https:\/\/www.chess.com\/openings\/(.*?)\"\]/.exec(pgn)?.at(1)?.replaceAll('-', ' ') || '?'

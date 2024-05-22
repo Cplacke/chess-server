@@ -11,7 +11,7 @@ export const HomePage = async () => {
     ] = await Promise.all([
         getProfile(USERNAME),
         getStats(USERNAME),
-        getAllGamesData()
+        getAllGames(USERNAME)
     ]);
 
     return `
@@ -140,10 +140,6 @@ export const HomePage = async () => {
         </html>
     `;
 }
- // 
-                    //     
-                    //     <img id="recent-game" class="mx-auto w-100 mt-4 mb-4" src="${games.games[0].gif}">
-                    // 
 
 const getProfile = async (USERNAME: string) => {
     const res = await fetch(`https://api.chess.com/pub/player/${USERNAME}`);
@@ -181,19 +177,4 @@ const getStats = async (USERNAME: string) => {
             loss: (loss/total)*100+'%',
         }
     }
-}
-
-const getAllGamesData = async () => {
-    // const res = await fetch('http://localhost:8080/pgn/games');
-    // const data = await res.json();
-    const data = await getAllGames(USERNAME);
-    //         document.querySelector('#wq').textContent = mates.mateBypiece.queen.count || '*';
-    //         document.querySelector('#wr').textContent = mates.mateBypiece.rook.count || '*';
-    //         document.querySelector('#wb').textContent = mates.mateBypiece.bishop.count || '*';
-    //         document.querySelector('#wn').textContent = mates.mateBypiece.knight.count || '*';
-    //         document.querySelector('#wp').textContent = mates.mateBypiece.pawn.count || '*';
-    //         document.querySelector('#wk').textContent = mates.mateBypiece.king.count || '*';
-    //         document.querySelector('#recent-game').setAttribute('src', mates.games[0].gif);
-    
-    return data;
 }

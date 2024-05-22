@@ -1,4 +1,3 @@
-import { readerFromStreamReader } from "https://deno.land/std/io/mod.ts";
 import { gameId2Gif } from './pgn-decoder/pgn.ts'
 import { getAllGames, cacheArchiveGames } from './service/chess.ts'
 import config from './config.ts'
@@ -42,9 +41,6 @@ Deno.serve(async (request: Request) => {
     return await createHomePageResponse()
 
 })
-
-const decoder = new TextDecoder('utf-8');
-const encoder = new TextEncoder();
 
 const createHomePageResponse = async () => {
     const html = await HomePage();
