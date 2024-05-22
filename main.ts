@@ -1,12 +1,14 @@
-import { getCheckmatePage } from './pages/checkmate.ts';
+import { readerFromStreamReader } from "https://deno.land/std/io/mod.ts";
+import { getCheckmatePage, getGamesElements } from './pages/Checkmate.ts';
+import { HomePage } from './pages/Home.ts';
 import { gameId2Gif } from './pgn-decoder/pgn.ts'
 import { getAllGames, cacheArchiveGames } from './service/chess.ts'
 import config from './config.ts'
-import { HomePage } from './pages/home.ts';
 
 Deno.serve(async (request: Request) => {
 
     const route = request.url;
+    console.info(route);
     if (/\?checkmates=queen/.test(route)) {
         return await createCheckmatePageResponse('Queen')
     } else if (/\?checkmates=rook/.test(route)) {
@@ -21,6 +23,8 @@ Deno.serve(async (request: Request) => {
         return await createCheckmatePageResponse('King')
     } else if (/\?checkmates=special/.test(route)) {
         return await createCheckmatePageResponse('Special')
+    } else if (/\games/.test(route)) {
+        return await createAdditionalGamesPageResponse(request)
     } else if (/generate\/gif/.test(route)) {
         return await createGifResponse(route)
     } else if (/assets\//.test(route)) {
@@ -40,6 +44,7 @@ Deno.serve(async (request: Request) => {
 })
 
 const decoder = new TextDecoder('utf-8');
+const encoder = new TextEncoder();
 
 const createHomePageResponse = async () => {
     const html = await HomePage();
@@ -55,6 +60,24 @@ const createCheckmatePageResponse = async (piece: string) => {
     const data = await getCheckmatePage(piece);
     return new Response(data, {
         status: 200,
+        headers: {
+            'Content-Type': 'HTML'
+        }
+    });
+}
+
+const createAdditionalGamesPageResponse = async (req: Request) => {
+    const body = await req.json();
+    let response = '';
+    let status = 200;
+    if (!body) {
+        status = 400;
+    } else {
+        response = await getGamesElements(body);
+    }
+
+    return new Response(response, {
+        status: status,
         headers: {
             'Content-Type': 'HTML'
         }
