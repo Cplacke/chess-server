@@ -1,9 +1,9 @@
 import { readerFromStreamReader } from "https://deno.land/std/io/mod.ts";
-import { getCheckmatePage, getGamesElements } from './pages/Checkmate.ts';
-import { HomePage } from './pages/Home.ts';
 import { gameId2Gif } from './pgn-decoder/pgn.ts'
 import { getAllGames, cacheArchiveGames } from './service/chess.ts'
 import config from './config.ts'
+import { HomePage } from "./pages/home.ts";
+import { getCheckmatePage, getGamesElements } from "./pages/checkmate.ts";
 
 Deno.serve(async (request: Request) => {
 

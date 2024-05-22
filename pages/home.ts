@@ -1,6 +1,6 @@
 import { USERNAME } from '../config.ts';
-import { getGamePage } from './checkmate.ts'
 import { getAllGames } from '../service/chess.ts'
+import { getGamePage } from './checkmate.ts';
 
 export const HomePage = async () => {
 
